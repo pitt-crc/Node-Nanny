@@ -1,6 +1,6 @@
 """Object relational mapper for dealing with the application database."""
 
-from sqlalchemy import Column, Integer, String, DATETIME
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -45,7 +45,7 @@ class Notification(Base):
     __tablename__ = 'notification'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    time = Column(DATETIME, nullable=False)
+    time = Column(DateTime, nullable=False)
     memory = Column(Integer, nullable=False)
     percentage = Column(Integer, nullable=False)
 
@@ -68,6 +68,6 @@ class Whitelist(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     node = Column(String, nullable=False)
-    termination = Column(DATETIME)
+    termination = Column(DateTime)
 
     user = relationship('User', back_populates='whitelists')
