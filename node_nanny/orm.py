@@ -64,7 +64,7 @@ class Whitelist(Base):
       - user (User): Many to one
     """
 
-    __tablename__ = 'notification'
+    __tablename__ = 'whitelist'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     node = Column(String, nullable=False)
