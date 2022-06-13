@@ -50,7 +50,8 @@ class UsageMonitor:
 
         return DataFrame(data).set_index(['USER', 'PID'])
 
-    def user_usage(self, username: str) -> DataFrame:
+    @classmethod
+    def user_usage(cls, username: str) -> DataFrame:
         """Return the current system usage for all processes tied to a given user
 
         Args:
@@ -61,7 +62,7 @@ class UsageMonitor:
         """
 
         try:
-            return self.current_usage().loc[username]
+            return cls.current_usage().loc[username]
 
         except KeyError:
             raise ValueError(f'No running processes found for user {username}')
