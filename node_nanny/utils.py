@@ -27,8 +27,8 @@ class UsageMonitor:
             'PNAME': pr.name(),
             'USER': pr.username(),
             'STATUS': pr.status(),
-            'CPU': f'{pr.cpu_percent():.2f}%',
-            'MEM': f'{pr.memory_percent():.2f}%'
+            'CPU': pr.cpu_percent(),
+            'MEM': pr.memory_percent()
         }
 
     @classmethod
