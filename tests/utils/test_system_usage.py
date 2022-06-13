@@ -1,4 +1,4 @@
-"""Tests for the fetching of system usage information by the ``UsageMonitor``
+"""Tests for the fetching of system usage information by the ``SystemUsage``
 class.
 """
 
@@ -8,7 +8,7 @@ from unittest import TestCase
 import psutil
 from pandas.api.types import is_float_dtype
 
-from node_nanny.utils import UsageMonitor
+from node_nanny.utils import SystemUsage
 
 
 class CurrentUsage(TestCase):
@@ -18,7 +18,7 @@ class CurrentUsage(TestCase):
     def setUpClass(cls) -> None:
         """Fetch the current system usage data"""
 
-        cls.usage_data = UsageMonitor.current_usage()
+        cls.usage_data = SystemUsage.current_usage()
 
     def test_index_by_user_pid(self) -> None:
         """Test the returned dataframe is indexed by username and PID"""
@@ -56,12 +56,12 @@ class UserUsage(TestCase):
         """Test a ``ValueError`` is raised when passed a username with no running processes"""
 
         with self.assertRaises(ValueError):
-            UsageMonitor.user_usage('fake_username')
+            SystemUsage.user_usage('fake_username')
 
     def test_indexed_by_pid(self) -> None:
         """Test the returned dataframe is indexed by the process id"""
 
-        user_usage = UsageMonitor.user_usage('root')
+        user_usage = SystemUsage.user_usage('root')
         self.assertEqual(['PID'], user_usage.index.names)
 
     def test_returned_data_matches_user(self) -> None:
@@ -69,7 +69,7 @@ class UserUsage(TestCase):
 
         login_user = os.getlogin()
         for test_user in ('root', login_user):
-            user_usage = UsageMonitor.user_usage(test_user)
+            user_usage = SystemUsage.user_usage(test_user)
             test_pid = user_usage.index[0]
 
             self.assertEqual(

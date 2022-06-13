@@ -4,7 +4,7 @@ import psutil
 from pandas import DataFrame
 
 
-class UsageMonitor:
+class SystemUsage:
     """Fetch current system usage information"""
 
     @staticmethod
