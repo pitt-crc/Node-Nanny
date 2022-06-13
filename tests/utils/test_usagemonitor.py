@@ -72,4 +72,6 @@ class UserUsage(TestCase):
             user_usage = UsageMonitor.user_usage(test_user)
             test_pid = user_usage.index[0]
 
-            self.assertEqual(test_user, psutil.Process(test_pid).username(), f'PID {test_pid} does not match user {test_user}')
+            self.assertEqual(
+                test_user, psutil.Process(test_pid).username(),
+                f'PID {test_pid} does not match user {test_user}')

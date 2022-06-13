@@ -21,14 +21,14 @@ class UsageMonitor:
             psutil.NoSuchProcess: If the given process ID can not be found
         """
 
-        pr = psutil.Process(pid)
+        process = psutil.Process(pid)
         return {
             'PID': pid,
-            'PNAME': pr.name(),
-            'USER': pr.username(),
-            'STATUS': pr.status(),
-            'CPU': pr.cpu_percent(),
-            'MEM': pr.memory_percent()
+            'PNAME': process.name(),
+            'USER': process.username(),
+            'STATUS': process.status(),
+            'CPU': process.cpu_percent(),
+            'MEM': process.memory_percent()
         }
 
     @classmethod
