@@ -2,6 +2,7 @@
 class.
 """
 
+import os
 from unittest import TestCase
 
 import psutil
@@ -39,6 +40,16 @@ class CurrentUsage(TestCase):
 class UserUsage(TestCase):
     """Test the fetching of system usage information for a single user"""
 
+    def setUpClass(cls) -> None:
+        """Make sure the test sure is not running as the user ``root``
+
+        Username ``root`` is treated as an explicit escape.
+        Running as ``root`` may invalidate that test.
+        """
+
+        if os.getlogin() == 'root':
+            raise RuntimeError('DO not run the test suite as root.')
+
     def test_error_on_invalid_user(self) -> None:
         """Test a ``ValueError`` is raised when passed a username with no running processes"""
 
@@ -54,8 +65,9 @@ class UserUsage(TestCase):
     def test_returned_data_matches_user(self) -> None:
         """Test the returned user data matches the requested user"""
 
-        test_username = 'root'
-        user_usage = UsageMonitor.user_usage(test_username)
-        test_pid = user_usage.index[0]
+        login_user = os.getlogin()
+        for test_user in ('root', login_user):
+            user_usage = UsageMonitor.user_usage(test_user)
+            test_pid = user_usage.index[0]
 
-        self.assertEqual(test_username, psutil.Process(test_pid).username())
+            self.assertEqual(test_user, psutil.Process(test_pid).username(), f'PID {test_pid} does not match user {test_user}')
