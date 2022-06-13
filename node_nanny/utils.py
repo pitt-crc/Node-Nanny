@@ -59,6 +59,9 @@ class UsageMonitor:
 
         Returns:
             A ``DataFrame`` of running processes tied to the given user
+
+        Raises:
+            ValueError: If no running processes are found for the given user
         """
 
         try:
