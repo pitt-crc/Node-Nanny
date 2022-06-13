@@ -6,6 +6,7 @@ import os
 from unittest import TestCase
 
 import psutil
+from pandas.api.types import is_float_dtype
 
 from node_nanny.utils import UsageMonitor
 
@@ -28,18 +29,19 @@ class CurrentUsage(TestCase):
         """Test the returned data includes CPU information"""
 
         self.assertIn('CPU', self.usage_data.columns)
-        self.assertIs(int, self.usage_data.CPU.dtype)
+        self.assertTrue(is_float_dtype(self.usage_data.MEM.dtype), 'CPU column is not a float')
 
     def test_data_includes_mem(self) -> None:
         """Test the returned data includes memory information"""
 
         self.assertIn('MEM', self.usage_data.columns)
-        self.assertIs(int, self.usage_data.MEM.dtype)
+        self.assertTrue(is_float_dtype(self.usage_data.MEM.dtype), 'CPU column is not a float')
 
 
 class UserUsage(TestCase):
     """Test the fetching of system usage information for a single user"""
 
+    @classmethod
     def setUpClass(cls) -> None:
         """Make sure the test sure is not running as the user ``root``
 

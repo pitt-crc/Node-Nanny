@@ -45,7 +45,8 @@ class UsageMonitor:
                 data.append(cls._get_process_data(process))
 
             # Some subprocesses may exit while fetching process info
-            except psutil.NoSuchProcess:
+            # Ignore test coverage since this error is pseudo-random
+            except psutil.NoSuchProcess:  # pragma: no cover
                 pass
 
         return DataFrame(data).set_index(['USER', 'PID'])
