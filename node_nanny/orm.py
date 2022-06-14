@@ -5,9 +5,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
-metadata = Base.metadata
-
-engine = create_engine('sqlite:///some_path.db')
 
 
 class User(Base):
@@ -77,3 +74,28 @@ class Whitelist(Base):
     termination = Column(DateTime)
 
     user = relationship('User', back_populates='whitelists')
+
+
+class DataAccessLayer:
+    """Data access layer for establishing connections with the application database"""
+
+    connection = None
+    engine = None
+    conn_string = None
+    metadata = Base.metadata
+
+    def db_init(self, conn_string):
+        """Update the connection information for the underlying database
+
+        Changes made here will affect the entire running application
+
+        Args:
+            conn_string: Connection information for the application database
+        """
+
+        self.engine = create_engine(conn_string or self.conn_string)
+        self.metadata.create_all(self.engine)
+        self.connection = self.engine.connect()
+
+
+DAL = DataAccessLayer()

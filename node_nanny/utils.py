@@ -1,7 +1,7 @@
 from pandas import DataFrame, read_sql
 from sqlalchemy import select
 
-from node_nanny.orm import Notification, User, engine
+from node_nanny.orm import Notification, User, DAL
 
 
 class UserNotifier:
@@ -29,7 +29,7 @@ class UserNotifier:
         """
 
         query = select(Notification).join(User).where(User.name == self._username)
-        return read_sql(query, engine)
+        return read_sql(query, DAL.engine)
 
     def notify(self, node: str, usage: DataFrame) -> None:
         """Notify the user their running processes have been killed
