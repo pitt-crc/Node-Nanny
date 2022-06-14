@@ -1,3 +1,7 @@
+from datetime import datetime
+from email.message import EmailMessage
+from smtplib import SMTP
+
 from pandas import DataFrame, read_sql
 from sqlalchemy import select
 
@@ -39,4 +43,30 @@ class UserNotifier:
             usage: System information for the killed processes
         """
 
-        raise NotImplementedError
+        # Update the notification table in the database
+        with DAL.session() as session:
+            # If the user has not been notified before, create a new User record
+            user_query = select(User).where(User.name == self._username)
+            user = session.execute(user_query).scalars().first()
+            if user is None:
+                user = User(name=self._username)
+
+            notification = Notification(
+                user=user,
+                node=node,
+                time=datetime.now(),
+                percentage=usage.MEM.sum()
+            )
+
+            session.add(user)
+            session.add(notification)
+            session.commit()
+
+        msg = EmailMessage()
+        msg.set_content("This is email text")
+        msg["Subject"] = "Email subject"
+        msg["From"] = "from_user@dummy.domain.edu"
+        msg["To"] = "to_user@dummy.domain.edu"
+
+        with SMTP("localhost") as smtp:
+            smtp.send_message(msg)

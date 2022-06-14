@@ -2,7 +2,7 @@
 
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 
@@ -36,7 +36,8 @@ class Notification(Base):
       - time      (Datetime): Date and time of the notification
       - memory     (Integer): Total memory usage
       - percentage (Integer): Memory usage as a percentage of system memory
-      - user_id    (Integer): Foriegn key for the User.id table
+      - user_id    (Integer): Foreign key for the ``User.id`` table
+      - node        (String): The name of the node
 
     Relationships:
       - user (User): Many to one
@@ -49,6 +50,7 @@ class Notification(Base):
     time = Column(DateTime, nullable=False)
     memory = Column(Integer, nullable=False)
     percentage = Column(Integer, nullable=False)
+    node = Column(String, nullable=False)
 
     user = relationship('User', back_populates='notifications')
 
@@ -60,7 +62,7 @@ class Whitelist(Base):
       - id           (Integer): Primary key for this table
       - node          (String): The name of the node
       - termination (Datetime): When the whitelist entry expires
-      - user_id      (Integer): Foriegn key for the User.id table
+      - user_id      (Integer): Foreign key for the ``User.id`` table
 
     Relationships:
       - user (User): Many to one
@@ -83,8 +85,9 @@ class DataAccessLayer:
     engine = None
     conn_string = None
     metadata = Base.metadata
+    session = None
 
-    def db_init(self, conn_string):
+    def db_init(self, conn_string: str) -> None:
         """Update the connection information for the underlying database
 
         Changes made here will affect the entire running application
@@ -96,6 +99,7 @@ class DataAccessLayer:
         self.engine = create_engine(conn_string or self.conn_string)
         self.metadata.create_all(self.engine)
         self.connection = self.engine.connect()
+        self.session = sessionmaker(self.engine)
 
 
 DAL = DataAccessLayer()
