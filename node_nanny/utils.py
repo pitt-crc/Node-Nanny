@@ -32,7 +32,10 @@ class UserNotifier:
             DataFrame with user notification history
         """
 
-        query = select(Notification).join(User).where(User.name == self._username)
+        query = select(
+            Notification.node, Notification.time, Notification.memory, Notification.percentage
+        ).join(User).where(User.name == self._username)
+
         return read_sql(query, DAL.engine)
 
     def notify(self, node: str, usage: DataFrame) -> None:
@@ -62,11 +65,11 @@ class UserNotifier:
             session.add(notification)
             session.commit()
 
-        msg = EmailMessage()
-        msg.set_content("This is email text")
-        msg["Subject"] = "Email subject"
-        msg["From"] = "from_user@dummy.domain.edu"
-        msg["To"] = "to_user@dummy.domain.edu"
+        message = EmailMessage()
+        message.set_content("This is email text")
+        message["Subject"] = "Email subject"
+        message["From"] = "from_user@dummy.domain.edu"
+        message["To"] = self.get_user_email()
 
         with SMTP("localhost") as smtp:
-            smtp.send_message(msg)
+            smtp.send_message(message)

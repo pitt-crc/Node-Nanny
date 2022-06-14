@@ -83,20 +83,20 @@ class DataAccessLayer:
 
     connection = None
     engine = None
-    conn_string = None
+    url = None
     metadata = Base.metadata
     session = None
 
-    def db_init(self, conn_string: str) -> None:
+    def db_init(self, url: str) -> None:
         """Update the connection information for the underlying database
 
         Changes made here will affect the entire running application
 
         Args:
-            conn_string: Connection information for the application database
+            url: URL information for the application database
         """
 
-        self.engine = create_engine(conn_string or self.conn_string)
+        self.engine = create_engine(url or self.url)
         self.metadata.create_all(self.engine)
         self.connection = self.engine.connect()
         self.session = sessionmaker(self.engine)
