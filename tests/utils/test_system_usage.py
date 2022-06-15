@@ -3,6 +3,7 @@ class.
 """
 
 import os
+import pwd
 from unittest import TestCase
 
 import psutil
@@ -49,7 +50,7 @@ class UserUsage(TestCase):
         Running as ``root`` may invalidate that test.
         """
 
-        if os.getlogin() == 'root':
+        if pwd.getpwuid(os.getuid()).pw_name == 'root':
             raise RuntimeError('DO not run the test suite as root.')
 
     def test_error_on_invalid_user(self) -> None:
@@ -67,8 +68,8 @@ class UserUsage(TestCase):
     def test_returned_data_matches_user(self) -> None:
         """Test the returned user data matches the requested user"""
 
-        login_user = os.getlogin()
-        for test_user in ('root', login_user):
+        current_user = pwd.getpwuid(os.getuid()).pw_name
+        for test_user in ('root', current_user):
             user_usage = SystemUsage.user_usage(test_user)
             test_pid = user_usage.index[0]
 
