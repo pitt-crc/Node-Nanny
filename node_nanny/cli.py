@@ -30,27 +30,27 @@ class CLIParser(ArgumentParser):
 
         ## remove
 
-def error(self, message, print_help=True):
-    """Print the error message to STDOUT and exit
+    def error(self, message, print_help=True):
+        """Print the error message to STDOUT and exit
 
-    Args:
-        message: The error message
-        print_help: If ``True`` and no arguments were passed, print the help text.
-    """
+        Args:
+            message: The error message
+            print_help: If ``True`` and no arguments were passed, print the help text.
+        """
 
-    if print_help and len(sys.argv) == 1:
-        self.print_help()
-        return
+        if print_help and len(sys.argv) == 1:
+            self.print_help()
+            return
 
-def execute(self):
-    """Parse command line arguments and execute usage monitor"""
+    def execute(self):
+        """Parse command line arguments and execute usage monitor"""
 
-    try:
-        args = self.parse_args()
-        function = args.pop('command', self.print_help)
+        try:
+            args = self.parse_args()
+            function = args.pop('command', self.print_help)
 
-        util = MonitorUtility()
-        util.function(**args)
+            util = MonitorUtility()
+            util.function(**args)
 
-    except KeyboardInterrupt:
-        exit('Keyboard interrupt detected! exiting...')
+        except KeyboardInterrupt:
+            exit('Keyboard interrupt detected! exiting...')
