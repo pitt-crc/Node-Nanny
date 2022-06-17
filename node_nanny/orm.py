@@ -78,8 +78,8 @@ class Whitelist(Base):
     user = relationship('User', back_populates='whitelists')
 
 
-class DataAccessLayer:
-    """Data access layer for establishing connections with the application database"""
+class DBConnection:
+    """A configurable connection to the application database"""
 
     connection = None
     engine = None
@@ -87,7 +87,7 @@ class DataAccessLayer:
     metadata = Base.metadata
     session = None
 
-    def db_init(self, url: str) -> None:
+    def configure(self, url: str) -> None:
         """Update the connection information for the underlying database
 
         Changes made here will affect the entire running application
@@ -102,4 +102,4 @@ class DataAccessLayer:
         self.session = sessionmaker(self.engine)
 
 
-DAL = DataAccessLayer()
+db = DBConnection()
