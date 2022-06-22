@@ -1,1 +1,5 @@
+# IDE files
 .idea
+
+# Rendered Documentation
+/docs/build/
