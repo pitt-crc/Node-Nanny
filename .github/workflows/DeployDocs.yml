@@ -1,0 +1,32 @@
+name: Deploy Documentation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v2
+
+      - name: Checkout source code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 0 # Otherwise, you will fail to push refs to destination repo
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r docs/requirements.txt
+
+      - name: Build and Commit
+        uses: sphinx-notes/pages@v2
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
