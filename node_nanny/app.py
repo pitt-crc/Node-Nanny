@@ -5,11 +5,20 @@ from typing import Optional
 
 from sqlalchemy import select
 
-from orm import User, Whitelist
+from orm import User, Whitelist, db
 
 
 class MonitorUtility:
     """Monitor system resource usage and manage currently running processes"""
+
+    def __init__(self, url: str) -> None:
+        """Configure the parent application
+
+        Args:
+            url: The URL of the application database
+        """
+
+        db.configure(url)
 
     @staticmethod
     def add(user: str, duration: Optional[timedelta] = None, node: Optional[str] = None, _global: bool = False) -> None:
@@ -25,7 +34,7 @@ class MonitorUtility:
         if node is None and not _global:
             raise ValueError('Must either specify a node name or set global to True.')
 
-        with Session() as session:
+        with db.session() as session:
             # Create a record for the user if it does not already exist
             user_query = select(User).where(User.name == user)
             user_record = session.execute(user_query).scalars().first()
