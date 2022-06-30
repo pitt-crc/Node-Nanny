@@ -5,7 +5,7 @@ from typing import Optional
 
 from sqlalchemy import select
 
-from orm import User, Whitelist, db
+from orm import User, Whitelist, DBConnection
 
 
 class MonitorUtility:
@@ -18,10 +18,16 @@ class MonitorUtility:
             url: The URL of the application database
         """
 
-        db.configure(url)
+        self.db = DBConnection()
+        self.db.configure(url)
 
-    @staticmethod
-    def add(user: str, duration: Optional[timedelta] = None, node: Optional[str] = None, _global: bool = False) -> None:
+    def add(
+            self,
+            user: str,
+            duration: Optional[timedelta] = None,
+            node: Optional[str] = None,
+            _global: bool = False
+    ) -> None:
         """Whitelist a user to prevent their processes from being killed
 
         Args:
@@ -34,7 +40,7 @@ class MonitorUtility:
         if node is None and not _global:
             raise ValueError('Must either specify a node name or set global to True.')
 
-        with db.session() as session:
+        with self.db.session() as session:
             # Create a record for the user if it does not already exist
             user_query = select(User).where(User.name == user)
             user_record = session.execute(user_query).scalars().first()
