@@ -2,7 +2,10 @@
 
 from unittest import TestCase
 
+from sqlalchemy import select
+
 from node_nanny.app import MonitorUtility
+from node_nanny.orm import db, User
 
 
 class AddUserToWhitelist(TestCase):
@@ -14,3 +17,20 @@ class AddUserToWhitelist(TestCase):
         app = MonitorUtility('sqlite:///:memory:')
         with self.assertRaises(ValueError):
             app.add('test_user', node=None, _global=False)
+
+    def test_user_is_whitelisted(self) -> None:
+        """Test a whitelist record is created for the user"""
+
+        app = MonitorUtility('sqlite:///:memory:')
+
+        username = 'test_user'
+        user_query = select(User).where(User.name == username)
+        with db.session() as session:
+            user_record = session.execute(user_query).scalars().first()
+            self.assertIsNone(user_record)
+
+        app.add(username, _global=True)
+        with db.session() as session:
+            user_record = session.execute(user_query).scalars().first()
+            self.assertTrue(user_record)
+            self.assertTrue(user_record.whitelists)

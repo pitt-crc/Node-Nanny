@@ -11,7 +11,7 @@ from orm import User, Whitelist, DBConnection
 class MonitorUtility:
     """Monitor system resource usage and manage currently running processes"""
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str = 'sqlite:///monitor.db') -> None:
         """Configure the parent application
 
         Args:
