@@ -1,0 +1,45 @@
+"""The ``app`` module defines the core application logic."""
+
+from datetime import datetime, timedelta
+from typing import Optional
+
+from sqlalchemy import select
+
+from orm import User, Whitelist
+
+
+class MonitorUtility:
+    """Monitor system resource usage and manage currently running processes"""
+
+    @staticmethod
+    def add(user: str, duration: Optional[timedelta] = None, node: Optional[str] = None, _global: bool = False) -> None:
+        """Whitelist a user to prevent their processes from being killed
+
+        Args:
+            user: The name of the user
+            duration: How long to whitelist the user for
+            node: The name of the node
+            _global: Whitelist the user on all nodes
+        """
+
+        if node is None and not _global:
+            raise ValueError('Must either specify a node name or set global to True.')
+
+        with Session() as session:
+            # Create a record for the user if it does not already exist
+            user_query = select(User).where(User.name == user)
+            user_record = session.execute(user_query).scalars().first()
+            if user_record is None:
+                user_record = User(name=user)
+
+            # Add a whitelist to the user record
+            user_record.whitelists.append(
+                Whitelist(
+                    node=node,
+                    termination=datetime.now() + duration,
+                    global_whitelist=_global
+                )
+            )
+
+            session.add(user_record)
+            session.commit()

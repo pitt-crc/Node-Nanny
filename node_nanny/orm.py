@@ -1,6 +1,6 @@
 """Object relational mapper for dealing with the application database."""
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -67,7 +67,8 @@ class Whitelist(Base):
     __tablename__ = 'whitelist'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    node = Column(String, nullable=False)
+    node = Column(String)
     termination = Column(DateTime)
+    global_whitelist = Column(Boolean, default=False)
 
     user = relationship('User', back_populates='whitelists')
