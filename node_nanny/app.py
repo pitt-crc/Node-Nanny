@@ -5,7 +5,7 @@ from typing import Optional
 
 from sqlalchemy import select
 
-from orm import User, Whitelist, DBConnection
+from .orm import User, Whitelist, DBConnection
 
 
 class MonitorUtility:
