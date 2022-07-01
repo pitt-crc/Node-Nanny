@@ -34,7 +34,7 @@ class GetNotificationHistory(TestCase):
             time=datetime(2015, 8, 12),
             memory=12,
             percentage=100,
-            node='login0'
+            node='login0.domain.com'
         )
 
         # Create database records using the dummy data
