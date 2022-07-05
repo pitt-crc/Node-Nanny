@@ -18,8 +18,7 @@ class MonitorUtility:
             url: The URL of the application database
         """
 
-        self.db = DBConnection()
-        self.db.configure(url)
+        DBConnection.configure(url)
 
     def add(
             self,
@@ -46,7 +45,7 @@ class MonitorUtility:
         else:
             termination = None
 
-        with self.db.session() as session:
+        with DBConnection.session() as session:
             # Create a record for the user if it does not already exist
             user_query = select(User).where(User.name == user)
             user_record = session.execute(user_query).scalars().first()
