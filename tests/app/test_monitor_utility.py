@@ -1,4 +1,5 @@
 """Tests for the ``MonitorUtility`` class."""
+
 from datetime import timedelta
 from unittest import TestCase
 

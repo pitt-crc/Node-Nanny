@@ -1,6 +1,7 @@
 """Object relational mapper for dealing with the application database."""
 
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey, MetaData
+from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.util import hybridproperty
@@ -90,11 +91,11 @@ class Whitelist(Base):
 class DBConnection:
     """A configurable connection to the application database"""
 
-    connection = None
-    engine = None
-    url = None
-    metadata = Base.metadata
-    session = None
+    connection: Connection = None
+    engine: Engine = None
+    url: str = None
+    metadata: MetaData = Base.metadata
+    session: sessionmaker = None
 
     @classmethod
     def configure(cls, url: str) -> None:
