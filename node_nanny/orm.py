@@ -3,6 +3,7 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.util import hybridproperty
 
 Base = declarative_base()
 
@@ -80,6 +81,10 @@ class Whitelist(Base):
     global_whitelist = Column(Boolean, default=False, nullable=False)
 
     user = relationship('User', back_populates='whitelists')
+
+    @hybridproperty
+    def duration(self):
+        return self.end_time - self.start_time
 
 
 class DBConnection:

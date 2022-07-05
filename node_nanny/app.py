@@ -53,6 +53,7 @@ class MonitorUtility:
             # Create a whitelist record if it doesn't already exist
             whitelist_query = select(Whitelist).join(User) \
                 .where(User.id == User.id) \
+                .where(Whitelist.node == node) \
                 .where(Whitelist.start_time < now) \
                 .where(Whitelist.end_time > now)
 
