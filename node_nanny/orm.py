@@ -1,11 +1,10 @@
 """Object relational mapper for dealing with the application database."""
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
-metadata = Base.metadata
 
 
 class User(Base):
@@ -37,6 +36,9 @@ class Notification(Base):
       - time      (Datetime): Date and time of the notification
       - memory     (Integer): Total memory usage
       - percentage (Integer): Memory usage as a percentage of system memory
+      - user_id    (Integer): Foreign key for the ``User.id`` table
+      - node        (String): The name of the node
+      - limit      (Integer): The memory limit that triggered the notification
 
     Relationships:
       - user (User): Many to one
@@ -45,9 +47,12 @@ class Notification(Base):
     __tablename__ = 'notification'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey(User.id))
     time = Column(DateTime, nullable=False)
     memory = Column(Integer, nullable=False)
     percentage = Column(Integer, nullable=False)
+    node = Column(String, nullable=False)
+    limit = Column(Integer, nullable=False)
 
     user = relationship('User', back_populates='notifications')
 
@@ -59,6 +64,7 @@ class Whitelist(Base):
       - id           (Integer): Primary key for this table
       - node          (String): The name of the node
       - termination (Datetime): When the whitelist entry expires
+      - user_id      (Integer): Foreign key for the ``User.id`` table
 
     Relationships:
       - user (User): Many to one
@@ -67,7 +73,35 @@ class Whitelist(Base):
     __tablename__ = 'whitelist'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey(User.id))
     node = Column(String, nullable=False)
     termination = Column(DateTime)
 
     user = relationship('User', back_populates='whitelists')
+
+
+class DBConnection:
+    """A configurable connection to the application database"""
+
+    connection = None
+    engine = None
+    url = None
+    metadata = Base.metadata
+    session = None
+
+    def configure(self, url: str) -> None:
+        """Update the connection information for the underlying database
+
+        Changes made here will affect the entire running application
+
+        Args:
+            url: URL information for the application database
+        """
+
+        self.engine = create_engine(url or self.url)
+        self.metadata.create_all(self.engine)
+        self.connection = self.engine.connect()
+        self.session = sessionmaker(self.engine)
+
+
+db = DBConnection()
