@@ -40,6 +40,12 @@ class MonitorUtility:
         if node is None and not _global:
             raise ValueError('Must either specify a node name or set global to True.')
 
+        if duration:
+            termination = datetime.now() + duration
+
+        else:
+            termination = None
+
         with self.db.session() as session:
             # Create a record for the user if it does not already exist
             user_query = select(User).where(User.name == user)
@@ -51,7 +57,7 @@ class MonitorUtility:
             user_record.whitelists.append(
                 Whitelist(
                     node=node,
-                    termination=datetime.now() + duration,
+                    termination=termination,
                     global_whitelist=_global
                 )
             )

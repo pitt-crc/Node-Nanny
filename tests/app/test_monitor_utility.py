@@ -5,7 +5,7 @@ from unittest import TestCase
 from sqlalchemy import select
 
 from node_nanny.app import MonitorUtility
-from node_nanny.orm import User
+from node_nanny.orm import User, DBConnection
 
 
 class AddUserToWhitelist(TestCase):
@@ -25,12 +25,12 @@ class AddUserToWhitelist(TestCase):
 
         username = 'test_user'
         user_query = select(User).where(User.name == username)
-        with app.db.session() as session:
+        with DBConnection.session() as session:
             user_record = session.execute(user_query).scalars().first()
             self.assertIsNone(user_record)
 
         app.add(username, _global=True)
-        with app.db.session() as session:
+        with DBConnection.session() as session:
             user_record = session.execute(user_query).scalars().first()
             self.assertTrue(user_record)
             self.assertTrue(user_record.whitelists)
