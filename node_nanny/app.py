@@ -40,6 +40,9 @@ class MonitorUtility:
             raise ValueError('Must either specify a node name or set global to True.')
 
         now = datetime.now()
+        one_hundred_years_in_days = 36_500
+        duration = duration or timedelta(days=one_hundred_years_in_days)
+
         with DBConnection.session() as session:
             # Create a record for the user if it does not already exist
             user_query = select(User).where(User.name == user)
