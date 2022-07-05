@@ -14,9 +14,9 @@ class MonitorUtility:
         """Terminate all processes launched by a given user"""
 
         user_processes = SystemUsage.user_usage(user)
-        for pid, process_info in user_processes.iterrows():
+        for pid in user_processes.index:
             try:
                 os.kill(pid, signal.SIGKILL)
 
-            except Exception:
+            except ProcessLookupError:
                 pass
