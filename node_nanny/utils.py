@@ -41,12 +41,13 @@ class UserNotifier:
 
         return read_sql(query, db.engine)
 
-    def notify(self, node: str, usage: DataFrame) -> None:
+    def notify(self, node: str, usage: DataFrame, limit: int) -> None:
         """Notify the user their running processes have been killed
 
         Args:
             node: Hostname of node their processes were running on
             usage: System information for the killed processes
+            limit: The memory limit used to trigger the notification
         """
 
         # Update the notification table in the database
@@ -61,7 +62,8 @@ class UserNotifier:
                 user=user,
                 node=node,
                 time=datetime.now(),
-                percentage=usage.MEM.sum()
+                percentage=usage.MEM.sum(),
+                limit=limit
             )
 
             session.add(user)

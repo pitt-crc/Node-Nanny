@@ -38,6 +38,7 @@ class Notification(Base):
       - percentage (Integer): Memory usage as a percentage of system memory
       - user_id    (Integer): Foreign key for the ``User.id`` table
       - node        (String): The name of the node
+      - limit      (Integer): The memory limit that triggered the notification
 
     Relationships:
       - user (User): Many to one
@@ -51,6 +52,7 @@ class Notification(Base):
     memory = Column(Integer, nullable=False)
     percentage = Column(Integer, nullable=False)
     node = Column(String, nullable=False)
+    limit = Column(Integer, nullable=False)
 
     user = relationship('User', back_populates='notifications')
 
