@@ -39,7 +39,7 @@ class GetNotificationHistory(TestCase):
 
         # Create database records using the dummy data
         user = User(name=username)
-        notification = Notification(**data, user=user)
+        notification = Notification(**data, user=user, limit=80)
         with db.session() as session:
             session.add(user)
             session.add(notification)
