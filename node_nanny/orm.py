@@ -75,7 +75,8 @@ class Whitelist(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey(User.id))
     node = Column(String)
-    termination = Column(DateTime)
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime)
     global_whitelist = Column(Boolean, default=False)
 
     user = relationship('User', back_populates='whitelists')
