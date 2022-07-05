@@ -90,7 +90,8 @@ class DBConnection:
     metadata = Base.metadata
     session = None
 
-    def configure(self, url: str) -> None:
+    @classmethod
+    def configure(cls, url: str) -> None:
         """Update the connection information for the underlying database
 
         Changes made here will affect the entire running application
@@ -99,10 +100,7 @@ class DBConnection:
             url: URL information for the application database
         """
 
-        self.engine = create_engine(url or self.url)
-        self.metadata.create_all(self.engine)
-        self.connection = self.engine.connect()
-        self.session = sessionmaker(self.engine)
-
-
-db = DBConnection()
+        cls.engine = create_engine(url or cls.url)
+        cls.metadata.create_all(cls.engine)
+        cls.connection = cls.engine.connect()
+        cls.session = sessionmaker(cls.engine)
