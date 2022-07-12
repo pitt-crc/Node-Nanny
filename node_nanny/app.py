@@ -1,11 +1,14 @@
 """The ``app`` module defines the core application logic."""
 
+import os
+import signal
 from datetime import datetime, timedelta
 from typing import Optional
 
 from sqlalchemy import select
 
 from .orm import User, Whitelist, DBConnection
+from .utils import SystemUsage
 
 
 class MonitorUtility:
@@ -70,3 +73,15 @@ class MonitorUtility:
             user_record.whitelists.append(whitelist_record)
             session.add(user_record)
             session.commit()
+
+    @staticmethod
+    def kill(user):
+        """Terminate all processes launched by a given user"""
+
+        user_processes = SystemUsage.user_usage(user)
+        for pid in user_processes.index:
+            try:
+                os.kill(pid, signal.SIGKILL)
+
+            except ProcessLookupError:
+                pass
