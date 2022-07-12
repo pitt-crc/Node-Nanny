@@ -1,5 +1,6 @@
 """Command line argument parser for node usage monitor"""
 
+import sys
 from argparse import ArgumentParser, ArgumentError
 from socket import gethostname
 from app import MonitorUtility
@@ -55,6 +56,12 @@ class CLIParser(ArgumentParser):
         Args:
             message: The error message
         """
+
+        # Print help when no arguements are provided
+        if len(sys.argv) == 1:
+            self.print_help()
+            return
+
         print("An error occurred: " + message)
         return
 
