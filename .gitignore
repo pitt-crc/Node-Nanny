@@ -1,1 +1,8 @@
+# IDE files
 .idea
+
+# Python bytecode
+*.pyc
+
+# Test suite files
+.coverage
