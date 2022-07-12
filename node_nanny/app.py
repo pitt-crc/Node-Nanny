@@ -48,7 +48,7 @@ class MonitorUtility:
         duration = duration or timedelta(days=one_hundred_years_in_days)
 
         with self._db.session() as session:
-            # Create a record for the user if it does not already exist
+            # Create a record for the user if it doesn't not already exist
             user_query = select(User).where(User.name == user)
             user_record = session.execute(user_query).scalars().first()
             if user_record is None:
@@ -75,8 +75,32 @@ class MonitorUtility:
             session.add(user_record)
             session.commit()
 
+    def remove(self, user: str, node: Optional[str], _global: bool = False) -> None:
+        """Remove a user from the application whitelist
+
+        Args:
+            user: The name of the user
+            node: The name of the node
+            _global: Whitelist the user on all nodes
+        """
+
+        if node is None and not _global:
+            raise ValueError('Must either specify a node name or set global to True.')
+
+        query = select(Whitelist).join(User).where(User.name == user)
+        if node:
+            query = query.where(Whitelist.node == node)
+
+        now = datetime.now()
+        with self._db.session() as session:
+            for record in session.execute(query).scalars().all():
+                record.end_time = now
+                session.add(record)
+
+            session.commit()
+
     @staticmethod
-    def kill(user):
+    def kill(user: str) -> None:
         """Terminate all processes launched by a given user"""
 
         user_processes = SystemUsage.user_usage(user)
