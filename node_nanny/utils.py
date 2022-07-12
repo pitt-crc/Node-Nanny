@@ -8,7 +8,7 @@ import psutil
 from pandas import DataFrame, read_sql
 from sqlalchemy import select
 
-from node_nanny.orm import Notification, User, db
+from node_nanny.orm import Notification, User, DBConnection
 
 
 class UserNotifier:
@@ -39,7 +39,7 @@ class UserNotifier:
             Notification.node, Notification.time, Notification.memory, Notification.percentage
         ).join(User).where(User.name == self._username)
 
-        return read_sql(query, db.engine)
+        return read_sql(query, DBConnection.engine)
 
     def notify(self, node: str, usage: DataFrame, limit: int) -> None:
         """Notify the user their running processes have been killed
@@ -51,7 +51,7 @@ class UserNotifier:
         """
 
         # Update the notification table in the database
-        with db.session() as session:
+        with DBConnection.session() as session:
             # If the user has not been notified before, create a new User record
             user_query = select(User).where(User.name == self._username)
             user = session.execute(user_query).scalars().first()

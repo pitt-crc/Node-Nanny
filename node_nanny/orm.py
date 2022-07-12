@@ -1,6 +1,7 @@
 """Object relational mapper for dealing with the application database."""
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey, MetaData
+from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -74,8 +75,10 @@ class Whitelist(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey(User.id))
-    node = Column(String, nullable=False)
-    termination = Column(DateTime)
+    node = Column(String)
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime, nullable=False)
+    global_whitelist = Column(Boolean, default=False, nullable=False)
 
     user = relationship('User', back_populates='whitelists')
 
@@ -83,13 +86,14 @@ class Whitelist(Base):
 class DBConnection:
     """A configurable connection to the application database"""
 
-    connection = None
-    engine = None
-    url = None
-    metadata = Base.metadata
-    session = None
+    connection: Connection = None
+    engine: Engine = None
+    url: str = None
+    metadata: MetaData = Base.metadata
+    session: sessionmaker = None
 
-    def configure(self, url: str) -> None:
+    @classmethod
+    def configure(cls, url: str) -> None:
         """Update the connection information for the underlying database
 
         Changes made here will affect the entire running application
@@ -98,10 +102,7 @@ class DBConnection:
             url: URL information for the application database
         """
 
-        self.engine = create_engine(url or self.url)
-        self.metadata.create_all(self.engine)
-        self.connection = self.engine.connect()
-        self.session = sessionmaker(self.engine)
-
-
-db = DBConnection()
+        cls.engine = create_engine(url or cls.url)
+        cls.metadata.create_all(cls.engine)
+        cls.connection = cls.engine.connect()
+        cls.session = sessionmaker(cls.engine)
