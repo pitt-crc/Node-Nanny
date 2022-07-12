@@ -15,7 +15,7 @@ sys.path.insert(0, str(project_root))
 
 # -- Project information -----------------------------------------------------
 
-project = u'CRC WUsage Monitor'
+project = u'CRC Usage Monitor'
 copyright = u'2022, Pitt Center for Research Computing'
 author = u'Pitt Center for Research Computing'
 
