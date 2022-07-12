@@ -50,4 +50,5 @@ class AddUserToWhitelist(TestCase):
         query = select(Whitelist).join(User).where(User.name == username).where(Whitelist.node == 'node1.domain.com')
         with DBConnection.session() as session:
             whitelist_record = session.execute(query).scalars().first()
-            self.assertEqual(2, whitelist_record.duration.days)
+            duration = whitelist_record.end_time - whitelist_record.start_time
+            self.assertEqual(2, duration.days)
