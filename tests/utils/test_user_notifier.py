@@ -5,7 +5,7 @@ from unittest import TestCase
 
 import pandas as pd
 
-from node_nanny.orm import db, Notification, User
+from node_nanny.orm import DBConnection, Notification, User
 from node_nanny.utils import UserNotifier
 
 
@@ -16,7 +16,7 @@ class GetNotificationHistory(TestCase):
     def setUpClass(cls):
         """Establish a connection to a temporary testing database"""
 
-        db.configure('sqlite:///:memory:')
+        DBConnection.configure('sqlite:///:memory:')
 
     def test_empty_return_for_fake_user(self) -> None:
         """Returned dataframe should be empty if there have been no notifications"""
@@ -40,7 +40,7 @@ class GetNotificationHistory(TestCase):
         # Create database records using the dummy data
         user = User(name=username)
         notification = Notification(**data, user=user, limit=80)
-        with db.session() as session:
+        with DBConnection.session() as session:
             session.add(user)
             session.add(notification)
             session.commit()
