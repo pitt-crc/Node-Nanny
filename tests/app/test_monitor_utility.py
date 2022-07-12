@@ -1,6 +1,6 @@
 """Tests for the ``MonitorUtility`` class."""
 
-from datetime import timedelta
+from datetime import timedelta, date
 from unittest import TestCase
 
 from sqlalchemy import select
@@ -52,3 +52,22 @@ class AddUserToWhitelist(TestCase):
             whitelist_record = session.execute(query).scalars().first()
             duration = whitelist_record.end_time - whitelist_record.start_time
             self.assertEqual(2, duration.days)
+
+
+class RemoveUserFromWhitelist(TestCase):
+    """Test the removal of users from the whitelist"""
+
+    def test_end_time_updated(self) -> None:
+        """Test the whitelist end time for removed users is set to today"""
+
+        username = 'test_user'
+        node = 'node1.domain.com'
+        app = MonitorUtility('sqlite:///:memory:')
+
+        app.add(username, node=node, duration=timedelta(days=100))
+        app.remove(username, node=node)
+
+        query = select(Whitelist).join(User).where(User.name == username)
+        with DBConnection.session() as session:
+            whitelist_record = session.execute(query).scalars().first()
+            self.assertEqual(date.today(), whitelist_record.end_time.date())

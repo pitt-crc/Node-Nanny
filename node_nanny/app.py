@@ -36,7 +36,6 @@ class MonitorUtility:
         Args:
             user: The name of the user
             duration: How long to whitelist the user for
-
             node: The name of the node
             _global: Whitelist the user on all nodes
         """
@@ -49,7 +48,7 @@ class MonitorUtility:
         duration = duration or timedelta(days=one_hundred_years_in_days)
 
         with self._db.session() as session:
-            # Create a record for the user if it does not already exist
+            # Create a record for the user if it doesn't not already exist
             user_query = select(User).where(User.name == user)
             user_record = session.execute(user_query).scalars().first()
             if user_record is None:
@@ -93,7 +92,7 @@ class MonitorUtility:
             query = query.where(Whitelist.node == node)
 
         now = datetime.now()
-        with DBConnection.session() as session:
+        with self._db.session() as session:
             for record in session.execute(query).scalars().all():
                 record.end_time = now
                 session.add(record)
@@ -101,7 +100,7 @@ class MonitorUtility:
             session.commit()
 
     @staticmethod
-    def kill(user):
+    def kill(user: str) -> None:
         """Terminate all processes launched by a given user"""
 
         user_processes = SystemUsage.user_usage(user)
