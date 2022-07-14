@@ -9,15 +9,19 @@ from node_nanny.app import MonitorUtility
 class CLIParser(ArgumentParser):
     """Class for passing command line arguments to the MonitorUtility app"""
 
-    def __init__(self):
+    def __init__(self, **kwargs) -> None:
         """Define arguments for the command line interface"""
 
-        super().__init__()
+        super().__init__(**kwargs)
+
+        if getattr(self, 'prog') in sys.argv[0]:
+            self.setup_commands()
+
+    def setup_commands(self):
 
         # Command subparser
         command = self.add_subparsers(
             dest='command',
-            parser_class=self.__class__,
             required=True,
             help='sub-command to run'
         )
@@ -121,7 +125,8 @@ class CLIParser(ArgumentParser):
             action='store',
             type=str,
             required=True,
-            help='username of the user who should be added to the whitelist'
+            help=('username of the user who should be added to '
+                  'the whitelist')
         )
 
         add.add_argument(
@@ -199,7 +204,7 @@ class CLIParser(ArgumentParser):
             self.print_help()
             sys.exit()
 
-        super.error(message)
+        super().error(message)
 
     def execute(self):
         """Parse command line arguments and execute usage monitor"""
