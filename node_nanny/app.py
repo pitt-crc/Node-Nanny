@@ -37,8 +37,9 @@ class MonitorUtility:
             .select_from(User).join(Whitelist) \
             .where(Whitelist.end_time > datetime.now())
 
-        whitelist_df = pd.read_sql(query, con=self._db.engine).set_index('User')
-        print(whitelist_df.to_markdown())
+        # Execute the query with pandas and rely on the default DataFrame string representation
+        whitelist_df = pd.read_sql(query, con=self._db.engine).set_index(['User', 'Global'])
+        print(whitelist_df)
 
     def add(
             self,
