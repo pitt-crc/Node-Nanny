@@ -22,7 +22,7 @@ class CLIParser(ArgumentParser):
             help='sub-command to run'
         )
 
-        ## Scan subcommand
+        # Scan subcommand
         scan = command.add_parser(
             'scan',
             help='initiate a scan for memory intensive processes'
@@ -36,7 +36,7 @@ class CLIParser(ArgumentParser):
             required=False,
             default=20,
             help=('max limit on memory usage, '
-                'any process above this will be killed')
+                  'any process above this will be killed')
         )
 
         scan.add_argument(
@@ -47,7 +47,7 @@ class CLIParser(ArgumentParser):
             required=False,
             default=5,
             help=('lower limit on memory usage, '
-            'processes under this amount will never be killed')
+                  'processes under this amount will never be killed')
         )
 
         scan.add_argument(
@@ -58,14 +58,15 @@ class CLIParser(ArgumentParser):
             required=False,
             default=5,
             help=('duration that a process found to be above '
-            'the memory limit is allowed to continue before being killed')
+                  'the memory limit is allowed to continue before '
+                  'being killed')
         )
 
-        ## Kill subcommand
+        # Kill subcommand
         kill = command.add_parser(
             'kill',
             help=('Kill all running processes attached to the '
-            'given username and notify the them via email')
+                  'given username and notify the them via email')
         )
 
         kill.add_argument(
@@ -86,12 +87,11 @@ class CLIParser(ArgumentParser):
             help='suppress outgoing email notifications'
         )
 
-
-        ## Notification History subcommand
+        # Notification History subcommand
         history = command.add_parser(
             'history',
-            help = ('display a history of recently killed jobs '
-            'and corresponding email notifications')
+            help=('display a history of recently killed jobs '
+                  'and corresponding email notifications')
         )
 
         history.add_argument(
@@ -103,16 +103,16 @@ class CLIParser(ArgumentParser):
             help='username of the notification history to show'
         )
 
-        ## Whitelist subcommand
+        # Whitelist subcommand
         command.add_parser(
-        'whitelist',
-        help='display current whitelist, user and node names'
+            'whitelist',
+            help='display current whitelist, user and node names'
         )
 
         add = command.add_parser(
             'add',
             help=('whitelist the given user so their jobs are '
-            'never killed on the current node')
+                  'never killed on the current node')
         )
 
         add.add_argument(
@@ -153,7 +153,7 @@ class CLIParser(ArgumentParser):
             help='whitelist user on all nodes'
         )
 
-        ## Remove from whitelist
+        # Remove from whitelist
         remove = command.add_parser(
             'remove',
             help='remove a user from the whitelist on the current node'
@@ -166,7 +166,7 @@ class CLIParser(ArgumentParser):
             type=str,
             required=True,
             help=('username of the user who should be removed from '
-            'the whitelist')
+                  'the whitelist')
         )
 
         node_opts = remove.add_mutually_exclusive_group()
@@ -187,7 +187,6 @@ class CLIParser(ArgumentParser):
             help='un-whitelist user on all nodes'
         )
 
-
     def error(self, message):
         """Print the error message to STDOUT and exit
 
@@ -207,4 +206,4 @@ class CLIParser(ArgumentParser):
 
         args = vars(self.parse_args())
         app = MonitorUtility()
-        getattr(app,args.pop('command'))(**args)
+        getattr(app, args.pop('command'))(**args)
