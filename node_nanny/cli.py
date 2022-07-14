@@ -199,7 +199,7 @@ class CLIParser(ArgumentParser):
             self.print_help()
             sys.exit()
 
-        print("An error occurred: " + message)
+        super.error(message)
 
     def execute(self):
         """Parse command line arguments and execute usage monitor"""
