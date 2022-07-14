@@ -39,6 +39,9 @@ class MonitorUtility:
 
         # Execute the query with pandas and rely on the default DataFrame string representation
         whitelist_df = pd.read_sql(query, con=self._db.engine).set_index(['User', 'Global'])
+        whitelist_df.Start = whitelist_df.Start.dt.round('1s')
+        whitelist_df.End = whitelist_df.Start.dt.round('1s')
+
         print(whitelist_df)
 
     def add(
