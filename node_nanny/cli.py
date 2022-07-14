@@ -1,8 +1,9 @@
 """Command line argument parser for node usage monitor"""
 
-import sys
 from argparse import ArgumentParser
 from socket import gethostname
+import sys
+
 from node_nanny.app import MonitorUtility
 
 
