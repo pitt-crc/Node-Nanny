@@ -1,3 +1,5 @@
+"""Tests for the ``DNConnection`` class"""
+
 from tempfile import NamedTemporaryFile
 from unittest import TestCase
 
@@ -15,20 +17,21 @@ class DBConfiguration(TestCase):
             custom_url = f'sqlite:///{temp.name}'
             DBConnection.configure(custom_url)
 
-        # Make sure each attribute is pointing to the new URL
-        self.assertIsNotNone(DBConnection.connection)
-        self.assertEqual(
-            custom_url, DBConnection.connection.engine.url.render_as_string(),
-            'Incorrect URL for `connection` attribute')
+        # Make sure the DB engine is pointing to the new URL
+        self.assertIsNotNone(DBConnection.url)
+        self.assertEqual(custom_url, DBConnection.url, '`DBConnection.url` not set to correct URL')
 
         self.assertIsNotNone(DBConnection.engine)
         self.assertEqual(
             custom_url, DBConnection.engine.url.render_as_string(),
             'Incorrect URL for `engine` attribute')
 
-        self.assertIsNotNone(DBConnection.url)
-        self.assertEqual(custom_url, DBConnection.url, 'Incorrect URL for `url` attribute')
+        self.assertIsNotNone(DBConnection.connection)
+        self.assertEqual(
+            DBConnection.engine, DBConnection.connection.engine,
+            '`DBConnection.connection` bound to incorrect engine')
 
-        # Todo: I'm hopping on a call and will finish this after
         self.assertIsNotNone(DBConnection.session)
-        self.assertEqual(False, DBConnection.session, 'Incorrect URL for `session` attribute')
+        self.assertEqual(
+            DBConnection.engine, DBConnection.session.kw['bind'],
+            '`DBConnection.session` bound to incorrect engine')
