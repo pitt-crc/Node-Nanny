@@ -3,6 +3,7 @@
 import os
 import signal
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -15,15 +16,18 @@ from .utils import SystemUsage
 class MonitorUtility:
     """Monitor system resource usage and manage currently running processes"""
 
-    def __init__(self, url: str = 'sqlite:///monitor.db') -> None:
+    def __init__(self, url: Optional[str] = None) -> None:
         """Configure the parent application
 
         Args:
-            url: The URL of the application database
+            url: Optionally use a custom application database
         """
 
+        db_path = Path(__file__).resolve().parent / 'monitor.db'
+        db_url = url or f'sqlite:///{db_path}'
+
         self._db = DBConnection
-        self._db.configure(url)
+        self._db.configure(db_url)
 
     def whitelist(self) -> None:
         """Print out the current user whitelist including user and node names."""
