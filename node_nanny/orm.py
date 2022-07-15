@@ -1,9 +1,11 @@
 """Object relational mapper for dealing with the application database."""
 
+import string
+
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey, MetaData
 from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, validates
 
 Base = declarative_base()
 
@@ -27,6 +29,30 @@ class User(Base):
 
     notifications = relationship('Notification', back_populates='user', cascade="all,delete")
     whitelists = relationship('Whitelist', back_populates='user', cascade="all,delete")
+
+    @validates('name')
+    def validate_name(self, key: str, value: str) -> str:
+        """Validate the given value is a valid username
+
+        Args:
+            key: The name of the column being validated
+            value( The value being validated
+
+        Returns:
+            The value
+
+        Raises:
+            ValueError: If the value is not valid
+        """
+
+        if not value:
+            raise ValueError(f'Value for {key} must be a non-empty string')
+
+        has_whitespace = any([c in value for c in string.whitespace])
+        if has_whitespace:
+            raise ValueError(f'Value for {key} cannot contain whitespace')
+
+        return value
 
 
 class Notification(Base):
