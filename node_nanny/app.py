@@ -23,11 +23,13 @@ class MonitorUtility:
             url: Optionally use a custom application database
         """
 
-        db_path = Path(__file__).resolve().parent / 'monitor.db'
-        db_url = url or f'sqlite:///{db_path}'
-
         self._db = DBConnection
-        self._db.configure(db_url)
+        if url:
+            self._db.configure(url)
+
+        else:
+            db_path = Path(__file__).resolve().parent / 'monitor.db'
+            self._db.configure(f'sqlite:///{db_path}')
 
     def whitelist(self) -> None:
         """Print out the current user whitelist including user and node names."""
