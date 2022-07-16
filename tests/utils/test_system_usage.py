@@ -51,7 +51,7 @@ class UserUsage(TestCase):
         """
 
         if pwd.getpwuid(os.getuid()).pw_name == 'root':
-            raise RuntimeError('DO not run the test suite as root.')
+            raise RuntimeError('Do not run the test suite as root.')
 
     def test_error_on_invalid_user(self) -> None:
         """Test a ``ValueError`` is raised when passed a username with no running processes"""
