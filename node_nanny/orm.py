@@ -46,11 +46,11 @@ class User(Base):
         """
 
         if not value:
-            raise ValueError(f'Value for {key} must be a non-empty string')
+            raise ValueError(f'Value for {self.__tablename__}.{key} must be a non-empty string')
 
         has_whitespace = any([c in value for c in string.whitespace])
         if has_whitespace:
-            raise ValueError(f'Value for {key} cannot contain whitespace')
+            raise ValueError(f'Value for {self.__tablename__}.{key} cannot contain whitespace')
 
         return value
 
@@ -101,7 +101,7 @@ class Notification(Base):
         if 0 <= value <= 100:
             return value
 
-        raise ValueError(f'Value for {key} column must be between 0 and 100 (got {value}).')
+        raise ValueError(f'Value for {self.__tablename__}.{key} column must be between 0 and 100.')
 
     @validates('limit', 'memory')
     def validate_positive(self, key: str, value: int) -> int:
@@ -119,7 +119,7 @@ class Notification(Base):
         """
 
         if value < 0:
-            raise ValueError(f'Value for {key} cannot be less than zero')
+            raise ValueError(f'Value for {self.__tablename__}.{key} cannot be less than zero')
 
         return value
 
