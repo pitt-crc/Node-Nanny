@@ -36,10 +36,10 @@ class User(Base):
 
         Args:
             key: The name of the column being validated
-            value( The value being validated
+            value: The value being validated
 
         Returns:
-            The value
+            The valid value
 
         Raises:
             ValueError: If the value is not valid
@@ -82,6 +82,26 @@ class Notification(Base):
     limit = Column(Integer, nullable=False)
 
     user = relationship('User', back_populates='notifications')
+
+    @validates('percentage')
+    def _validate_percent_notified(self, key: str, value: int) -> int:
+        """Validate the given value is between 0 and 100 (inclusive)
+
+        Args:
+            key: The name of the column being validated
+            value: The value being validated
+
+        Returns:
+            The valid value
+
+        Raises:
+            ValueError: If the value is not valid
+        """
+
+        if 0 <= value <= 100:
+            return value
+
+        raise ValueError(f'Value for {key} column must be between 0 and 100 (got {value}).')
 
 
 class Whitelist(Base):

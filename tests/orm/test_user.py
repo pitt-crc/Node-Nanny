@@ -1,4 +1,4 @@
-"""Tests for the ORM ``User`` table."""
+"""Tests for the ORM ``User`` class."""
 
 from unittest import TestCase
 
@@ -13,6 +13,13 @@ class NameValidation(TestCase):
         """Test no error is raised for a valid username"""
 
         User(name='username')
+
+    def test_value_is_assigned(self) -> None:
+        """Test the validated value is assigned to the table instance"""
+
+        name = 'username'
+        user = User(name=name)
+        self.assertEqual(name, user.name)
 
     def test_empty_name(self):
         """Test for a ``ValueError`` when name is an empty string"""
