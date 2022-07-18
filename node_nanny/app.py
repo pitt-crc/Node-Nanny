@@ -3,9 +3,10 @@
 import os
 import platform
 import signal
+from copy import copy
 from datetime import datetime, timedelta
 from time import sleep
-from typing import Optional
+from typing import Optional, List
 
 import pandas as pd
 from sqlalchemy import select, or_
@@ -40,12 +41,6 @@ class MonitorUtility:
             min_usage: Never kill users using below the given percentage of memory
         """
 
-        # Query returns all users that are whitelisted globally or on the current hostname
-        whitelisted_users_query = select(User.name) \
-            .select_from(User).join(Whitelist) \
-            .where(Whitelist.end_time > datetime.now()) \
-            .where(or_(Whitelist.node == self._hostname, Whitelist.global_whitelist))
-
         wait_time = 0
         while True:
             # Get the current memory usage (total and per user)
@@ -55,22 +50,8 @@ class MonitorUtility:
 
             # If memory usage exceeds the ``memory`` argument, start killing users
             if total_usage > memory and wait_time > wait:
-
-                # Identify what users should have their processes killed
-                min_usage_users = user_memory_usage.drop(user_memory_usage <= min_usage)
-                user_list = min_usage_users.sort_values(ascending=True).index
-                with self._db.session() as session:
-                    whitelisted_users = session.execute(whitelisted_users_query).scalars().all()
-                    users_to_kill = user_list.drop(whitelisted_users).to_list()
-
-                # Kill users until memory usage drops below threshold
-                while users_to_kill and total_usage > memory:
-                    username = users_to_kill.pop(-1)
-                    self.kill(username)
-                    UserNotifier(username).notify(self._hostname, node_usage.loc[username], memory)
-
-                    total_usage = SystemUsage().current_usage().MEM.sum()
-
+                users_to_kill = self._get_users_to_kill(min_usage, user_memory_usage)
+                self._restore_system_memory(users_to_kill, memory)
                 wait_time = 0
 
             elif total_usage < memory:
@@ -78,6 +59,54 @@ class MonitorUtility:
 
             sleep(frequency)
             wait_time += frequency
+
+    def _get_users_to_kill(self, min_usage: int, user_memory: pd.Series) -> List[str]:
+        """Determine which users jobs should be killed
+
+        Args:
+            min_usage: Don't include usernames using less than the given memory percentage
+            user_memory: Pandas series of memory usage percentage indexed by username
+
+        Returns:
+            A list of usernames sorted by increasing memory usage
+        """
+
+        # Query returns all users that are whitelisted globally or on the current hostname
+        whitelisted_users_query = select(User.name) \
+            .select_from(User).join(Whitelist) \
+            .where(Whitelist.end_time > datetime.now()) \
+            .where(or_(Whitelist.node == self._hostname, Whitelist.global_whitelist))
+
+        # Identify what users are above the threshold
+        min_usage_users = user_memory.drop(user_memory <= min_usage)
+        user_list = min_usage_users.sort_values(ascending=True).index
+
+        # Drop any whitelisted usernames
+        with self._db.session() as session:
+            whitelisted_users = session.execute(whitelisted_users_query).scalars().all()
+            users_to_kill = user_list.drop(whitelisted_users).to_list()
+
+        return users_to_kill
+
+    def _restore_system_memory(self, usernames: List[str], memory_limit: int) -> None:
+        """Terminate running user processes until memory usage drops below a given threshold
+
+        Args:
+            usernames: List of usernames to terminate jobs for
+            memory_limit: Threshold to stop killing jobs at
+        """
+
+        usernames = copy(usernames)
+        node_usage = SystemUsage().current_usage()
+        total_usage = node_usage.MEM.sum()
+
+        # Kill users until memory usage drops below threshold
+        while usernames and total_usage > memory_limit:
+            username = usernames.pop()
+            self.kill(username)
+            UserNotifier(username).notify(self._hostname, node_usage.loc[username], memory_limit)
+
+            total_usage = SystemUsage().current_usage().MEM.sum()
 
     def whitelist(self) -> None:
         """Print out the current user whitelist including user and node names."""
