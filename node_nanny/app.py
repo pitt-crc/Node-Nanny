@@ -51,9 +51,9 @@ class MonitorUtility:
         wait_time = 0
         while True:
             node_usage = SystemUsage().current_usage()
-            user_usage = node_usage.MEM.groupby(level=0).sum()
-            user_list = user_usage.sort_values(ascending=True).index
-            total_usage = user_usage.sum()
+            user_memory_usage = node_usage.MEM.groupby(level=0).sum()
+            user_list = user_memory_usage.sort_values(ascending=True).index
+            total_usage = user_memory_usage.sum()
 
             if total_usage > memory and wait_time > wait:
                 with self._db.session() as session:
@@ -64,6 +64,9 @@ class MonitorUtility:
                     self.kill(users_to_kill.pop(-1))
                     total_usage = SystemUsage().current_usage().MEM.sum()
 
+                wait_time = 0
+
+            elif total_usage < memory:
                 wait_time = 0
 
             sleep(frequency)
