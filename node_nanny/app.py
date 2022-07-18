@@ -5,6 +5,7 @@ import signal
 from datetime import datetime, timedelta
 from typing import Optional
 
+import pandas as pd
 from sqlalchemy import select
 
 from .orm import User, Whitelist, DBConnection
@@ -23,6 +24,25 @@ class MonitorUtility:
 
         self._db = DBConnection
         self._db.configure(url)
+
+    def whitelist(self) -> None:
+        """Print out the current user whitelist including user and node names."""
+
+        query = select([
+            User.name.label('User'),
+            Whitelist.global_whitelist.label('Global'),
+            Whitelist.start_time.label('Start'),
+            Whitelist.end_time.label('End')
+        ]) \
+            .select_from(User).join(Whitelist) \
+            .where(Whitelist.end_time > datetime.now())
+
+        # Execute the query with pandas and rely on the default DataFrame string representation
+        whitelist_df = pd.read_sql(query, con=self._db.engine).set_index(['User', 'Global'])
+        whitelist_df.Start = whitelist_df.Start.dt.round('1s')
+        whitelist_df.End = whitelist_df.Start.dt.round('1s')
+
+        print(whitelist_df)
 
     def add(
             self,
