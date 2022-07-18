@@ -1,4 +1,5 @@
 """Object relational mapper for dealing with the application database."""
+
 from typing import Callable
 
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey, MetaData
