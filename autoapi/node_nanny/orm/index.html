@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>node_nanny.orm &mdash; CRC Usage Monitor  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="prev" title="node_nanny.utils" href="../utils/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> CRC Usage Monitor
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../app/index.html">node_nanny.app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">node_nanny.utils</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">node_nanny.orm</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Base">Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#User">User</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#User.__tablename__">__tablename__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#User.id">id</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#User.name">name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#User.notifications">notifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#User.whitelists">whitelists</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Notification">Notification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.__tablename__">__tablename__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.id">id</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.user_id">user_id</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.time">time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.memory">memory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.percentage">percentage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.node">node</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.limit">limit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Notification.user">user</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Whitelist">Whitelist</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.__tablename__">__tablename__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.id">id</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.user_id">user_id</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.node">node</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.start_time">start_time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.end_time">end_time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.global_whitelist">global_whitelist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Whitelist.user">user</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#DBConnection">DBConnection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#DBConnection.connection">connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DBConnection.engine">engine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DBConnection.url">url</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DBConnection.metadata">metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DBConnection.session">session</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DBConnection.configure">configure</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CRC Usage Monitor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>node_nanny.orm</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/node_nanny/orm/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="node-nanny-orm">
+<h1>node_nanny.orm<a class="headerlink" href="#node-nanny-orm" title="Permalink to this heading"></a></h1>
+<p>Object relational mapper for dealing with the application database.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="Base">
+<span class="sig-name descname"><span class="pre">Base</span></span><a class="headerlink" href="#Base" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">User</span></span><a class="headerlink" href="#User" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Base" title="Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>User account data</p>
+<dl class="simple">
+<dt>Table Fields:</dt><dd><ul class="simple">
+<li><p>id      (Integer): Primary key for this table</p></li>
+<li><p>username (String): Unique account name</p></li>
+</ul>
+</dd>
+<dt>Relationships:</dt><dd><ul class="simple">
+<li><p>notifications (Notifications): One to many</p></li>
+<li><p>whitelists        (Whitelist): One to many</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="User.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">user</span></em><a class="headerlink" href="#User.__tablename__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="User.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#User.id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="User.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#User.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="User.notifications">
+<span class="sig-name descname"><span class="pre">notifications</span></span><a class="headerlink" href="#User.notifications" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="User.whitelists">
+<span class="sig-name descname"><span class="pre">whitelists</span></span><a class="headerlink" href="#User.whitelists" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Notification">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Notification</span></span><a class="headerlink" href="#Notification" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Base" title="Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>Record of user notification history</p>
+<dl class="simple">
+<dt>Table Fields:</dt><dd><ul class="simple">
+<li><p>id         (Integer): Primary key for this table</p></li>
+<li><p>time      (Datetime): Date and time of the notification</p></li>
+<li><p>memory     (Integer): Total memory usage</p></li>
+<li><p>percentage (Integer): Memory usage as a percentage of system memory</p></li>
+<li><p>user_id    (Integer): Foreign key for the <code class="docutils literal notranslate"><span class="pre">User.id</span></code> table</p></li>
+<li><p>node        (String): The name of the node</p></li>
+<li><p>limit      (Integer): The memory limit that triggered the notification</p></li>
+</ul>
+</dd>
+<dt>Relationships:</dt><dd><ul class="simple">
+<li><p>user (User): Many to one</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">notification</span></em><a class="headerlink" href="#Notification.__tablename__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#Notification.id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#Notification.user_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.time">
+<span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#Notification.time" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.memory">
+<span class="sig-name descname"><span class="pre">memory</span></span><a class="headerlink" href="#Notification.memory" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.percentage">
+<span class="sig-name descname"><span class="pre">percentage</span></span><a class="headerlink" href="#Notification.percentage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.node">
+<span class="sig-name descname"><span class="pre">node</span></span><a class="headerlink" href="#Notification.node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.limit">
+<span class="sig-name descname"><span class="pre">limit</span></span><a class="headerlink" href="#Notification.limit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Notification.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#Notification.user" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Whitelist">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Whitelist</span></span><a class="headerlink" href="#Whitelist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Base" title="Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>Whitelist of users whose jobs should not be killed</p>
+<dl class="simple">
+<dt>Table Fields:</dt><dd><ul class="simple">
+<li><p>id           (Integer): Primary key for this table</p></li>
+<li><p>node          (String): The name of the node</p></li>
+<li><p>termination (Datetime): When the whitelist entry expires</p></li>
+<li><p>user_id      (Integer): Foreign key for the <code class="docutils literal notranslate"><span class="pre">User.id</span></code> table</p></li>
+</ul>
+</dd>
+<dt>Relationships:</dt><dd><ul class="simple">
+<li><p>user (User): Many to one</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">whitelist</span></em><a class="headerlink" href="#Whitelist.__tablename__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#Whitelist.id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#Whitelist.user_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.node">
+<span class="sig-name descname"><span class="pre">node</span></span><a class="headerlink" href="#Whitelist.node" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.start_time">
+<span class="sig-name descname"><span class="pre">start_time</span></span><a class="headerlink" href="#Whitelist.start_time" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.end_time">
+<span class="sig-name descname"><span class="pre">end_time</span></span><a class="headerlink" href="#Whitelist.end_time" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.global_whitelist">
+<span class="sig-name descname"><span class="pre">global_whitelist</span></span><a class="headerlink" href="#Whitelist.global_whitelist" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Whitelist.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#Whitelist.user" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="DBConnection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DBConnection</span></span><a class="headerlink" href="#DBConnection" title="Permalink to this definition"></a></dt>
+<dd><p>A configurable connection to the application database</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DBConnection.connection">
+<span class="sig-name descname"><span class="pre">connection</span></span><em class="property"><span class="w"> </span><span class="pre">:sqlalchemy.engine.Connection</span></em><a class="headerlink" href="#DBConnection.connection" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DBConnection.engine">
+<span class="sig-name descname"><span class="pre">engine</span></span><em class="property"><span class="w"> </span><span class="pre">:sqlalchemy.engine.Engine</span></em><a class="headerlink" href="#DBConnection.engine" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DBConnection.url">
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="w"> </span><span class="pre">:str</span></em><a class="headerlink" href="#DBConnection.url" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DBConnection.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="w"> </span><span class="pre">:sqlalchemy.MetaData</span></em><a class="headerlink" href="#DBConnection.metadata" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="DBConnection.session">
+<span class="sig-name descname"><span class="pre">session</span></span><em class="property"><span class="w"> </span><span class="pre">:Callable[[],</span> <span class="pre">sqlalchemy.orm.Session]</span></em><a class="headerlink" href="#DBConnection.session" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DBConnection.configure">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#DBConnection.configure" title="Permalink to this definition"></a></dt>
+<dd><p>Update the connection information for the underlying database</p>
+<p>Changes made here will affect the entire running application</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> – URL information for the application database</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../utils/index.html" class="btn btn-neutral float-left" title="node_nanny.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Pitt Center for Research Computing.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

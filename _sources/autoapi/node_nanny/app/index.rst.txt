@@ -1,0 +1,50 @@
+node_nanny.app
+========================
+
+.. autoapi-nested-parse::
+
+   The ``app`` module defines the core application logic.
+
+
+
+
+
+Module Contents
+---------------
+
+.. py:class:: MonitorUtility(url: str = 'sqlite:///monitor.db')
+
+   Monitor system resource usage and manage currently running processes
+
+   .. py:method:: whitelist(self) -> None
+
+      Print out the current user whitelist including user and node names.
+
+
+   .. py:method:: add(self, user: str, duration: Optional[datetime.timedelta] = None, node: Optional[str] = None, _global: bool = False) -> None
+
+      Whitelist a user to prevent their processes from being killed
+
+      :param user: The name of the user
+      :param duration: How long to whitelist the user for
+      :param node: The name of the node
+      :param _global: Whitelist the user on all nodes
+
+
+   .. py:method:: remove(self, user: str, node: Optional[str], _global: bool = False) -> None
+
+      Remove a user from the application whitelist
+
+      :param user: The name of the user
+      :param node: The name of the node
+      :param _global: Whitelist the user on all nodes
+
+
+   .. py:method:: kill(user: str) -> None
+      :staticmethod:
+
+      Terminate all processes launched by a given user
+
+
+
+

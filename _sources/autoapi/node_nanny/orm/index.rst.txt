@@ -1,0 +1,220 @@
+node_nanny.orm
+========================
+
+.. autoapi-nested-parse::
+
+   Object relational mapper for dealing with the application database.
+
+
+
+
+
+Module Contents
+---------------
+
+.. py:data:: Base
+   
+
+   
+
+.. py:class:: User
+
+   Bases: :py:obj:`Base`
+
+   User account data
+
+   Table Fields:
+     - id      (Integer): Primary key for this table
+     - username (String): Unique account name
+
+   Relationships:
+     - notifications (Notifications): One to many
+     - whitelists        (Whitelist): One to many
+
+   .. py:attribute:: __tablename__
+      :annotation: = user
+
+      
+
+   .. py:attribute:: id
+      
+
+      
+
+   .. py:attribute:: name
+      
+
+      
+
+   .. py:attribute:: notifications
+      
+
+      
+
+   .. py:attribute:: whitelists
+      
+
+      
+
+
+.. py:class:: Notification
+
+   Bases: :py:obj:`Base`
+
+   Record of user notification history
+
+   Table Fields:
+     - id         (Integer): Primary key for this table
+     - time      (Datetime): Date and time of the notification
+     - memory     (Integer): Total memory usage
+     - percentage (Integer): Memory usage as a percentage of system memory
+     - user_id    (Integer): Foreign key for the ``User.id`` table
+     - node        (String): The name of the node
+     - limit      (Integer): The memory limit that triggered the notification
+
+   Relationships:
+     - user (User): Many to one
+
+   .. py:attribute:: __tablename__
+      :annotation: = notification
+
+      
+
+   .. py:attribute:: id
+      
+
+      
+
+   .. py:attribute:: user_id
+      
+
+      
+
+   .. py:attribute:: time
+      
+
+      
+
+   .. py:attribute:: memory
+      
+
+      
+
+   .. py:attribute:: percentage
+      
+
+      
+
+   .. py:attribute:: node
+      
+
+      
+
+   .. py:attribute:: limit
+      
+
+      
+
+   .. py:attribute:: user
+      
+
+      
+
+
+.. py:class:: Whitelist
+
+   Bases: :py:obj:`Base`
+
+   Whitelist of users whose jobs should not be killed
+
+   Table Fields:
+     - id           (Integer): Primary key for this table
+     - node          (String): The name of the node
+     - termination (Datetime): When the whitelist entry expires
+     - user_id      (Integer): Foreign key for the ``User.id`` table
+
+   Relationships:
+     - user (User): Many to one
+
+   .. py:attribute:: __tablename__
+      :annotation: = whitelist
+
+      
+
+   .. py:attribute:: id
+      
+
+      
+
+   .. py:attribute:: user_id
+      
+
+      
+
+   .. py:attribute:: node
+      
+
+      
+
+   .. py:attribute:: start_time
+      
+
+      
+
+   .. py:attribute:: end_time
+      
+
+      
+
+   .. py:attribute:: global_whitelist
+      
+
+      
+
+   .. py:attribute:: user
+      
+
+      
+
+
+.. py:class:: DBConnection
+
+   A configurable connection to the application database
+
+   .. py:attribute:: connection
+      :annotation: :sqlalchemy.engine.Connection
+
+      
+
+   .. py:attribute:: engine
+      :annotation: :sqlalchemy.engine.Engine
+
+      
+
+   .. py:attribute:: url
+      :annotation: :str
+
+      
+
+   .. py:attribute:: metadata
+      :annotation: :sqlalchemy.MetaData
+
+      
+
+   .. py:attribute:: session
+      :annotation: :Callable[[], sqlalchemy.orm.Session]
+
+      
+
+   .. py:method:: configure(cls, url: str) -> None
+      :classmethod:
+
+      Update the connection information for the underlying database
+
+      Changes made here will affect the entire running application
+
+      :param url: URL information for the application database
+
+
+
+

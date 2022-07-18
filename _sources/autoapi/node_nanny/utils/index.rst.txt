@@ -1,0 +1,78 @@
+node_nanny.utils
+==========================
+
+.. autoapi-nested-parse::
+
+   Utilities for fetching and interacting with system data.
+
+
+
+
+
+Module Contents
+---------------
+
+.. py:class:: UserNotifier(username: str)
+
+   Handles the sending and tracking of user email notifications
+
+   .. py:method:: get_user_email(self) -> str
+
+      Return the email corresponding to the current user
+
+
+   .. py:method:: notification_history(self) -> pandas.DataFrame
+
+      Return a tabular summary of previous user notifications
+
+      :returns: DataFrame with user notification history
+
+
+   .. py:method:: notify(self, node: str, usage: pandas.DataFrame, limit: int) -> None
+
+      Notify the user their running processes have been killed
+
+      :param node: Hostname of node their processes were running on
+      :param usage: System information for the killed processes
+      :param limit: The memory limit used to trigger the notification
+
+
+
+.. py:class:: SystemUsage
+
+   Fetch current system usage information
+
+   .. py:method:: _get_process_data(pid: int) -> dict
+      :staticmethod:
+
+      Return the current system usage for a single running processes
+
+      :param pid: The ID of a currently running process
+
+      :returns: A dictionary with system usage information for the given proces ID
+
+      :raises psutil.NoSuchProcess: If the given process ID can not be found
+
+
+   .. py:method:: current_usage(cls) -> pandas.DataFrame
+      :classmethod:
+
+      Return the current system usage for all running processes
+
+      :returns: A ``DataFrame`` of currently running processes
+
+
+   .. py:method:: user_usage(cls, username: str) -> pandas.DataFrame
+      :classmethod:
+
+      Return the current system usage for all processes tied to a given user
+
+      :param username: The name of the user to return usage for
+
+      :returns: A ``DataFrame`` of running processes tied to the given user
+
+      :raises ValueError: If no running processes are found for the given user
+
+
+
+
