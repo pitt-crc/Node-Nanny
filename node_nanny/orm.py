@@ -1,9 +1,11 @@
 """Object relational mapper for dealing with the application database."""
 
+from typing import Callable
+
 from sqlalchemy import Boolean, Column, Integer, String, DateTime, create_engine, ForeignKey, MetaData
 from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, Session
 
 Base = declarative_base()
 
@@ -90,7 +92,7 @@ class DBConnection:
     engine: Engine = None
     url: str = None
     metadata: MetaData = Base.metadata
-    session: sessionmaker = None
+    session: Callable[[], Session] = None
 
     @classmethod
     def configure(cls, url: str) -> None:
