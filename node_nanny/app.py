@@ -11,7 +11,7 @@ import pandas as pd
 from sqlalchemy import select, or_
 
 from .orm import User, Whitelist, DBConnection
-from .utils import SystemUsage
+from .utils import SystemUsage, UserNotifier
 
 
 class MonitorUtility:
@@ -64,8 +64,11 @@ class MonitorUtility:
                     users_to_kill = user_list.drop(whitelisted_users).to_list()
 
                 # Kill users until memory usage drops below threshold
-                while total_usage > memory:
-                    self.kill(users_to_kill.pop(-1))
+                while users_to_kill and total_usage > memory:
+                    username = users_to_kill.pop(-1)
+                    self.kill(username)
+                    UserNotifier(username).notify(self._hostname, node_usage.loc[username], memory)
+
                     total_usage = SystemUsage().current_usage().MEM.sum()
 
                 wait_time = 0
