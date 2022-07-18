@@ -40,21 +40,22 @@ class MonitorUtility:
             min_usage: Never kill users using below the given percentage of memory
         """
 
-        if wait or min_usage:
-            raise NotImplementedError('Support for the ``wait`` and ``min_usage`` keywords is not implemented yet.')
+        if min_usage:
+            raise NotImplementedError('Support for the ``min_usage`` keyword is not implemented yet.')
 
         whitelisted_users_query = select(User.name) \
             .select_from(User).join(Whitelist) \
             .where(Whitelist.end_time > datetime.now()) \
             .where(or_(Whitelist.node == self._hostname, Whitelist.global_whitelist))
 
+        wait_time = 0
         while True:
             node_usage = SystemUsage().current_usage()
             user_usage = node_usage.MEM.groupby(level=0).sum()
             user_list = user_usage.sort_values(ascending=True).index
             total_usage = user_usage.sum()
 
-            if total_usage > memory:
+            if total_usage > memory and wait_time > wait:
                 with self._db.session() as session:
                     whitelisted_users = session.execute(whitelisted_users_query).scalars().all()
                     users_to_kill = user_list.drop(whitelisted_users).to_list()
@@ -63,7 +64,10 @@ class MonitorUtility:
                     self.kill(users_to_kill.pop(-1))
                     total_usage = SystemUsage().current_usage().MEM.sum()
 
+                wait_time = 0
+
             sleep(frequency)
+            wait_time += frequency
 
     def whitelist(self) -> None:
         """Print out the current user whitelist including user and node names."""
