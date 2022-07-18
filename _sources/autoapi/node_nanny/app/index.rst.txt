@@ -12,7 +12,7 @@ node_nanny.app
 Module Contents
 ---------------
 
-.. py:class:: MonitorUtility(url: str = 'sqlite:///monitor.db')
+.. py:class:: MonitorUtility(url: Optional[str] = None)
 
    Monitor system resource usage and manage currently running processes
 
