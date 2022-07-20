@@ -5,7 +5,7 @@ from unittest import TestCase
 
 import pandas as pd
 
-from node_nanny.orm import DBConnection, Notification, User
+from node_nanny.orm import DBConnection, Notification, User, Node
 from node_nanny.utils import UserNotifier
 
 
@@ -34,7 +34,7 @@ class GetNotificationHistory(TestCase):
             time=datetime(2015, 8, 12),
             memory=12,
             percentage=100,
-            node='login0.domain.com'
+            node=Node(hostname='login0.domain.com')
         )
 
         # Create database records using the dummy data

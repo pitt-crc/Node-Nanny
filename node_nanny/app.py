@@ -8,7 +8,7 @@ from typing import Optional
 import pandas as pd
 from sqlalchemy import select
 
-from .orm import User, Whitelist, DBConnection
+from .orm import DBConnection,  Node, User, Whitelist
 from .utils import SystemUsage
 
 
@@ -84,7 +84,7 @@ class MonitorUtility:
             whitelist_record = session.execute(whitelist_query).scalars().first()
             if whitelist_record is None:
                 whitelist_record = Whitelist(
-                    node=node,
+                    node=Node(hostname=node),
                     start_time=now,
                     global_whitelist=_global
                 )

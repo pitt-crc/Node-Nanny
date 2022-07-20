@@ -36,7 +36,7 @@ class UserNotifier:
         """
 
         query = select(
-            Notification.node, Notification.time, Notification.memory, Notification.percentage
+            Notification.node.hostname, Notification.time, Notification.memory, Notification.percentage
         ).join(User).where(User.name == self._username)
 
         return read_sql(query, DBConnection.engine)
