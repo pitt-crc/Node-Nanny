@@ -5,8 +5,9 @@ import platform
 import signal
 from copy import copy
 from datetime import datetime, timedelta
+from pathlib import Path
 from time import sleep
-from typing import Optional, List
+from typing import List, Optional
 
 import pandas as pd
 from sqlalchemy import select, or_
@@ -18,16 +19,22 @@ from .utils import SystemUsage, UserNotifier
 class MonitorUtility:
     """Monitor system resource usage and manage currently running processes"""
 
-    def __init__(self, url: str = 'sqlite:///monitor.db') -> None:
+    def __init__(self, url: Optional[str] = None) -> None:
         """Configure the parent application
 
         Args:
-            url: The URL of the application database
+            url: Optionally use a custom application database
         """
 
-        self._db = DBConnection
-        self._db.configure(url)
         self._hostname = platform.node()
+        self._db = DBConnection
+
+        if url:
+            self._db.configure(url)
+
+        else:
+            db_path = Path(__file__).resolve().parent / 'monitor.db'
+            self._db.configure(f'sqlite:///{db_path}')
 
     def scan(self, frequency: int, memory: int, wait: int = 0, min_usage: int = 0) -> None:
         """Scan for and kill and jobs running over a memory usage limit
