@@ -10,7 +10,7 @@ from node_nanny.app import MonitorUtility
 class CLIParser(ArgumentParser):
     """Class for passing command line arguments to the MonitorUtility app"""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """Define arguments for the command line interface"""
 
         super().__init__(**kwargs)
