@@ -3,8 +3,10 @@
 import os
 import signal
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
+import pandas as pd
 from sqlalchemy import select
 
 from .orm import User, Whitelist, DBConnection
@@ -14,15 +16,39 @@ from .utils import SystemUsage
 class MonitorUtility:
     """Monitor system resource usage and manage currently running processes"""
 
-    def __init__(self, url: str = 'sqlite:///monitor.db') -> None:
+    def __init__(self, url: Optional[str] = None) -> None:
         """Configure the parent application
 
         Args:
-            url: The URL of the application database
+            url: Optionally use a custom application database
         """
 
         self._db = DBConnection
-        self._db.configure(url)
+        if url:
+            self._db.configure(url)
+
+        else:
+            db_path = Path(__file__).resolve().parent / 'monitor.db'
+            self._db.configure(f'sqlite:///{db_path}')
+
+    def whitelist(self) -> None:
+        """Print out the current user whitelist including user and node names."""
+
+        query = select([
+            User.name.label('User'),
+            Whitelist.global_whitelist.label('Global'),
+            Whitelist.start_time.label('Start'),
+            Whitelist.end_time.label('End')
+        ]) \
+            .select_from(User).join(Whitelist) \
+            .where(Whitelist.end_time > datetime.now())
+
+        # Execute the query with pandas and rely on the default DataFrame string representation
+        whitelist_df = pd.read_sql(query, con=self._db.engine).set_index(['User', 'Global'])
+        whitelist_df.Start = whitelist_df.Start.dt.round('1s')
+        whitelist_df.End = whitelist_df.Start.dt.round('1s')
+
+        print(whitelist_df)
 
     def add(
             self,
