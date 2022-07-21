@@ -13,9 +13,3 @@ class NullableColumns(TestCase):
 
         self.assertFalse(Whitelist.start_time.nullable)
         self.assertFalse(Whitelist.end_time.nullable)
-
-    def test_node_names_nullable(self) -> None:
-        """Test the ``node`` column is nullable but the ``global_whitelist`` column is not"""
-
-        self.assertTrue(Whitelist.node.nullable)
-        self.assertFalse(Whitelist.global_whitelist.nullable)
