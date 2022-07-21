@@ -30,22 +30,26 @@ class GetNotificationHistory(TestCase):
 
         # Define dummy values to add into the database
         username = 'sam'
-        data = dict(
-            time=datetime(2015, 8, 12),
-            memory=12,
-            percentage=100,
-            node=Node(hostname='login0.domain.com')
-        )
+        time = datetime(2015, 8, 12)
+        memory = 12
+        percentage = 100
+        hostname = 'login0.domain.com'
 
         # Create database records using the dummy data
         user = User(name=username)
-        notification = Notification(**data, user=user, limit=80)
+        node = Node(hostname=hostname)
+        notification = Notification(user=user, node=node, time=time, memory=memory, percentage=percentage, limit=80)
         with DBConnection.session() as session:
-            session.add(user)
             session.add(notification)
             session.commit()
 
         # Ensure the returned dataframe matches the test data
+        expected_df = pd.DataFrame(data=[dict(
+            hostname=hostname,
+            time=time,
+            memory=memory,
+            percentage=percentage
+        )])
+
         returned_df = UserNotifier(username).notification_history()
-        expected_df = pd.DataFrame(data=[data])
         pd.testing.assert_frame_equal(expected_df, returned_df, check_like=True)

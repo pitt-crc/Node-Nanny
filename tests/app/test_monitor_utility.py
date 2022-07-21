@@ -6,7 +6,7 @@ from unittest import TestCase
 from sqlalchemy import select
 
 from node_nanny.app import MonitorUtility
-from node_nanny.orm import User, DBConnection, Whitelist
+from node_nanny.orm import User, DBConnection, Whitelist, Node
 
 
 class AddUserToWhitelist(TestCase):
@@ -47,7 +47,10 @@ class AddUserToWhitelist(TestCase):
         app.add(username, node='node1.domain.com', duration=timedelta(days=2))
 
         # Define SQL queries to select each of the records above
-        query = select(Whitelist).join(User).where(User.name == username).where(Whitelist.node == 'node1.domain.com')
+        query = select(Whitelist).join(User).join(Node) \
+            .where(User.name == username) \
+            .where(Node.hostname == 'node1.domain.com')
+
         with DBConnection.session() as session:
             whitelist_record = session.execute(query).scalars().first()
             duration = whitelist_record.end_time - whitelist_record.start_time

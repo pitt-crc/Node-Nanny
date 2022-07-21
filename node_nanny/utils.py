@@ -8,7 +8,7 @@ import psutil
 from pandas import DataFrame, read_sql
 from sqlalchemy import select
 
-from node_nanny.orm import Notification, User, DBConnection
+from node_nanny.orm import Notification, User, DBConnection, Node
 
 
 class UserNotifier:
@@ -35,9 +35,8 @@ class UserNotifier:
             DataFrame with user notification history
         """
 
-        query = select(
-            Notification.node.hostname, Notification.time, Notification.memory, Notification.percentage
-        ).join(User).where(User.name == self._username)
+        query = select(Node.hostname, Notification.time, Notification.memory, Notification.percentage) \
+            .join(User).join(Node).where(User.name == self._username)
 
         return read_sql(query, DBConnection.engine)
 

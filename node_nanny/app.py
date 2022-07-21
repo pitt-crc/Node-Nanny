@@ -8,7 +8,7 @@ from typing import Optional
 import pandas as pd
 from sqlalchemy import select
 
-from .orm import DBConnection,  Node, User, Whitelist
+from .orm import DBConnection, Node, User, Whitelist
 from .utils import SystemUsage
 
 
@@ -28,14 +28,12 @@ class MonitorUtility:
     def whitelist(self) -> None:
         """Print out the current user whitelist including user and node names."""
 
-        query = select([
-            User.name.label('User'),
-            Whitelist.global_whitelist.label('Global'),
-            Whitelist.start_time.label('Start'),
-            Whitelist.end_time.label('End')
-        ]) \
-            .select_from(User).join(Whitelist) \
-            .where(Whitelist.end_time > datetime.now())
+        columns = (User.name.label('User'),
+                   Whitelist.global_whitelist.label('Global'),
+                   Whitelist.start_time.label('Start'),
+                   Whitelist.end_time.label('End'))
+
+        query = select(*columns).select_from(User).join(Whitelist).where(Whitelist.end_time > datetime.now())
 
         # Execute the query with pandas and rely on the default DataFrame string representation
         whitelist_df = pd.read_sql(query, con=self._db.engine).set_index(['User', 'Global'])
@@ -68,18 +66,18 @@ class MonitorUtility:
         duration = duration or timedelta(days=one_hundred_years_in_days)
 
         with self._db.session() as session:
-            # Create a record for the user if it doesn't not already exist
+            # Create a record for the user if it doesn't already exist
             user_query = select(User).where(User.name == user)
             user_record = session.execute(user_query).scalars().first()
             if user_record is None:
                 user_record = User(name=user)
 
             # Create a whitelist record if it doesn't already exist
-            whitelist_query = select(Whitelist).join(User) \
-                .where(User.id == User.id) \
-                .where(Whitelist.node == node) \
-                .where(Whitelist.start_time < now) \
-                .where(Whitelist.end_time > now)
+            whitelist_query = select(Whitelist).join(User).join(Node).where(
+                User.id == User.id,
+                Node.hostname == node,
+                Whitelist.start_time < now,
+                Whitelist.end_time > now)
 
             whitelist_record = session.execute(whitelist_query).scalars().first()
             if whitelist_record is None:
@@ -109,7 +107,7 @@ class MonitorUtility:
 
         query = select(Whitelist).join(User).where(User.name == user)
         if node:
-            query = query.where(Whitelist.node == node)
+            query = query.join(Node).where(Node.hostname == node)
 
         now = datetime.now()
         with self._db.session() as session:
