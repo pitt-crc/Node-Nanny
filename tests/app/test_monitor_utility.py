@@ -1,12 +1,35 @@
 """Tests for the ``MonitorUtility`` class."""
 
 from datetime import timedelta, date
+from pathlib import Path
+from tempfile import NamedTemporaryFile
 from unittest import TestCase
 
 from sqlalchemy import select
 
+from node_nanny import __file__ as package_file
 from node_nanny.app import MonitorUtility
 from node_nanny.orm import User, DBConnection, Whitelist, Node
+
+
+class TestDBConfiguration(TestCase):
+    """Test the configuration of the database location at init"""
+
+    def test_default_db_sqlite(self) -> None:
+        """Test the database defaults to SQLite in the package directory"""
+
+        app_dir = Path(package_file).resolve().parent / 'monitor.db'
+
+        MonitorUtility()
+        self.assertEqual(f'sqlite:///{app_dir}', DBConnection.url)
+
+    def test_custom_db_url(self) -> None:
+        """Test the database defaults to SQLite in the package directory"""
+
+        with NamedTemporaryFile(suffix='.db') as temp:
+            custom_url = f'sqlite:///{temp.name}'
+            MonitorUtility(custom_url)
+            self.assertEqual(custom_url, DBConnection.url)
 
 
 class AddUserToWhitelist(TestCase):
