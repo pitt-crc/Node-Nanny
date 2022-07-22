@@ -46,7 +46,7 @@ def get_meta():
 _author, _version = get_meta()
 setup(
     name='crc-node-nanny',
-    description='Command-line applications for interacting with HPC clusters at the Pitt CRC.',
+    description='Monitor system memory usage and kill jobs using too much memory.',
     version=_version,
     packages=find_packages(),
     python_requires='>=3.7',
