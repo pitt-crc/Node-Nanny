@@ -207,9 +207,10 @@ class CLIParser(ArgumentParser):
 
         super().error(message)
 
-    def execute(self):
+    @classmethod
+    def execute(cls):
         """Parse command line arguments and execute usage monitor"""
 
-        args = vars(self.parse_args())
-        app = MonitorUtility()
+        app = cls()
+        args = vars(app.parse_args())
         getattr(app, args.pop('command'))(**args)
