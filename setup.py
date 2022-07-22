@@ -45,7 +45,7 @@ def get_meta():
 
 _author, _version = get_meta()
 setup(
-    name='crc-wrappers',
+    name='crc-node-nanny',
     description='Command-line applications for interacting with HPC clusters at the Pitt CRC.',
     version=_version,
     packages=find_packages(),
